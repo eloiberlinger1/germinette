@@ -1,5 +1,6 @@
 import sys
 import os
+import re
 import importlib.util
 from rich.console import Console
 from rich.panel import Panel
@@ -235,10 +236,18 @@ class Tester(BaseTester):
              self.record_error(exercise_label, "Output Error", "Missing header.")
              return
 
-        if "Inventory value: 950 gold" in out:
+        # Flexible check: extract value from "Inventory value: X" pattern
+        value_match = re.search(r'Inventory value:\s*(\d+)', out)
+        if value_match and int(value_match.group(1)) == 950:
              console.print("[green]OK (Value Calculation)[/green]")
         else:
              console.print("[red]KO (Value Calculation)[/red]")
+             if value_match:
+                 self.record_error(exercise_label, "Value Error", 
+                                  f"Expected value: 950, found: {value_match.group(1)}")
+             else:
+                 self.record_error(exercise_label, "Value Error", 
+                                  "Could not find 'Inventory value: X' pattern in output")
              
         if "=== Transaction: Alice gives Bob 2 potions ===" in out:
              console.print("[green]OK (Transaction Logic)[/green]")
