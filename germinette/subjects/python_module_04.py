@@ -154,9 +154,16 @@ class Tester(BaseTester):
             result = subprocess.run(cmd, capture_output=True, text=True)
             out = result.stdout + result.stderr
 
-            if "=== CYBER ARCHIVES - EXTRACTION SYSTEM ===" not in out:
+            header_found = (
+                "=== CYBER ARCHIVES - EXTRACTION SYSTEM ===" in out or
+                "=== CYBER ARCHIVES - DATA RECOVERY SYSTEM ===" in out
+            )
+            if not header_found:
                 console.print("[red]KO (Missing Header)[/red]")
-                self.record_error(exercise_label, "Output Error", "Missing '=== CYBER ARCHIVES - EXTRACTION SYSTEM ==='")
+                self.record_error(exercise_label, "Output Error", 
+                                 "Missing header. Expected either:\n"
+                                 "- '=== CYBER ARCHIVES - EXTRACTION SYSTEM ==='\n"
+                                 "- '=== CYBER ARCHIVES - DATA RECOVERY SYSTEM ==='")
                 return
             
             if "SECURE ARCHIVE FRAGMENT" in out and "The binary flow remains constant" in out:
