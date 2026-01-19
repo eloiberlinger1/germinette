@@ -34,10 +34,10 @@ class Tester(BaseTester):
         
         try:
             for name, content in files.items():
-                if not os.path.exists(name):
-                    with open(name, "w") as f:
-                        f.write(content)
-                    self.generated_files.append(name)
+                # Always recreate test files to ensure correct content
+                with open(name, "w") as f:
+                    f.write(content)
+                self.generated_files.append(name)
         except Exception as e:
             console.print(f"[red]Warning: Failed to create test data: {e}[/red]")
 
